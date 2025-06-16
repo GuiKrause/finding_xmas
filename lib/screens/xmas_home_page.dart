@@ -12,16 +12,16 @@ class XMASHomePage extends StatefulWidget {
 }
 
 class _XMASHomePageState extends State<XMASHomePage> {
-  List<String> matriz = [];
-  String palavra = "XMAS";
-  int totalEncontrado = 0;
-  Set<Offset> posicoesEncontradas = {};
-  bool buscaRealizada = false;
-  bool carregando = false;
+  List<String> matrix = [];
+  String word = "XMAS";
+  int totalFound = 0;
+  Set<Offset> positionsFound = {};
+  bool searchPerformed = false;
+  bool loading = false;
 
   // Controle da janela
-  static const int linhasVisiveis = 20;
-  int linhaInicial = 0;
+  static const int visibleLines = 20;
+  int initialLine = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -43,34 +43,34 @@ class _XMASHomePageState extends State<XMASHomePage> {
                 spacing: 10,
                 children: [
                   ElevatedButton(
-                    onPressed: carregarArquivo,
+                    onPressed: loadFile,
                     child: const Text('Load Matrix'),
                   ),
                   ElevatedButton(
-                    onPressed: calcularXMAS,
+                    onPressed: calculateXMAS,
                     child: const Text('Search "XMAS"'),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Text('Total words found: $totalEncontrado'),
+              Text('Total words found: $totalFound'),
               const SizedBox(height: 20),
-              if (carregando)
+              if (loading)
                 const CircularProgressIndicator()
-              else if (matriz.isEmpty)
-                const Text('Nenhuma matriz carregada.')
+              else if (matrix.isEmpty)
+                const Text('No matrix loaded.')
               else
                 Expanded(
                   child: Column(
                     children: [
                       Expanded(
                         flex: 5,
-                        child: buildMatrizView(
-                          buscaRealizada: buscaRealizada,
-                          matriz: matriz,
-                          linhaInicial: linhaInicial,
-                          linhasVisiveis: linhasVisiveis,
-                          posicoesEncontradas: posicoesEncontradas,
+                        child: buildMatrixView(
+                          searchPerformed: searchPerformed,
+                          matrix: matrix,
+                          initialLine: initialLine,
+                          visibleLines: visibleLines,
+                          positionsFound: positionsFound,
                         ),
                       ),
                       Expanded(
@@ -81,19 +81,19 @@ class _XMASHomePageState extends State<XMASHomePage> {
                             IconButton(
                               style: ButtonStyle(
                                 backgroundColor: WidgetStateProperty.all(
-                                  linhaInicial > 0
+                                  initialLine > 0
                                       ? AppColors.secondary
                                       : Colors.grey[300],
                                 ),
                                 foregroundColor: WidgetStateProperty.all(
-                                  linhaInicial > 0
+                                  initialLine > 0
                                       ? Colors.white
                                       : Colors.grey[500],
                                 ),
                               ),
                               icon: const Icon(Icons.arrow_upward),
-                              onPressed: linhaInicial > 0
-                                  ? () => moverJanela(-1)
+                              onPressed: initialLine > 0
+                                  ? () => moveWindow(-1)
                                   : null,
                             ),
                             const SizedBox(width: 20),
@@ -101,31 +101,28 @@ class _XMASHomePageState extends State<XMASHomePage> {
                               disabledColor: Colors.grey,
                               style: ButtonStyle(
                                 backgroundColor: WidgetStateProperty.all(
-                                  (linhaInicial + linhasVisiveis) <
-                                          matriz.length
+                                  (initialLine + visibleLines) < matrix.length
                                       ? AppColors.secondary
                                       : Colors.grey[300],
                                 ),
                                 foregroundColor: WidgetStateProperty.all(
-                                  (linhaInicial + linhasVisiveis) <
-                                          matriz.length
+                                  (initialLine + visibleLines) < matrix.length
                                       ? Colors.white
                                       : Colors.grey[500],
                                 ),
                               ),
                               icon: const Icon(Icons.arrow_downward),
                               onPressed:
-                                  (linhaInicial + linhasVisiveis) <
-                                      matriz.length
-                                  ? () => moverJanela(1)
+                                  (initialLine + visibleLines) < matrix.length
+                                  ? () => moveWindow(1)
                                   : null,
                             ),
                             const SizedBox(width: 20),
                             ElevatedButton(
-                              onPressed: linhaInicial > 0
+                              onPressed: initialLine > 0
                                   ? () {
                                       setState(() {
-                                        linhaInicial = 0;
+                                        initialLine = 0;
                                       });
                                     }
                                   : null,
@@ -134,13 +131,12 @@ class _XMASHomePageState extends State<XMASHomePage> {
                             const SizedBox(width: 10),
                             ElevatedButton(
                               onPressed:
-                                  (linhaInicial + linhasVisiveis) <
-                                      matriz.length
+                                  (initialLine + visibleLines) < matrix.length
                                   ? () {
                                       setState(() {
-                                        linhaInicial =
-                                            (matriz.length - linhasVisiveis)
-                                                .clamp(0, matriz.length);
+                                        initialLine =
+                                            (matrix.length - visibleLines)
+                                                .clamp(0, matrix.length);
                                       });
                                     }
                                   : null,
@@ -160,54 +156,54 @@ class _XMASHomePageState extends State<XMASHomePage> {
     );
   }
 
-  Future<void> carregarArquivo() async {
+  Future<void> loadFile() async {
     setState(() {
-      carregando = true;
-      matriz = [];
-      totalEncontrado = 0;
-      posicoesEncontradas.clear();
-      linhaInicial = 0;
-      buscaRealizada = false;
+      loading = true;
+      matrix = [];
+      totalFound = 0;
+      positionsFound.clear();
+      initialLine = 0;
+      searchPerformed = false;
     });
 
     try {
-      final conteudo = await rootBundle.loadString('assets/input.txt');
-      final linhas = conteudo
+      final content = await rootBundle.loadString('assets/input.txt');
+      final lines = content
           .split('\n')
           .map((linha) => linha.trim())
           .where((l) => l.isNotEmpty)
           .toList();
 
       setState(() {
-        matriz = linhas;
+        matrix = lines;
       });
     } catch (e) {
       debugPrint('Erro on load file: $e');
     }
 
     setState(() {
-      carregando = false;
+      loading = false;
     });
   }
 
-  void calcularXMAS() {
-    if (matriz.isEmpty) return;
+  void calculateXMAS() {
+    if (matrix.isEmpty) return;
 
-    final resultado = buscarPalavraNaMatriz(matriz, palavra);
+    final resultado = searchWordInMatrix(matrix, word);
 
     setState(() {
-      totalEncontrado = resultado.total;
-      posicoesEncontradas = resultado.posicoes;
-      buscaRealizada = true;
+      totalFound = resultado.total;
+      positionsFound = resultado.positions;
+      searchPerformed = true;
     });
   }
 
-  void moverJanela(int delta) {
+  void moveWindow(int delta) {
     setState(() {
-      linhaInicial += delta;
-      if (linhaInicial < 0) linhaInicial = 0;
-      if (linhaInicial > matriz.length - linhasVisiveis) {
-        linhaInicial = matriz.length - linhasVisiveis;
+      initialLine += delta;
+      if (initialLine < 0) initialLine = 0;
+      if (initialLine > matrix.length - visibleLines) {
+        initialLine = matrix.length - visibleLines;
       }
     });
   }

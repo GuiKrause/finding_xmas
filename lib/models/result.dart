@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-class ResultadoBusca {
+class Result {
   final int total;
-  final Set<Offset> posicoes;
+  final Set<Offset> positions;
 
-  ResultadoBusca(this.total, this.posicoes);
+  Result(this.total, this.positions);
 }

@@ -1,62 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:xmas_algorithm/models/result.dart';
 
-ResultadoBusca buscarPalavraNaMatriz(List<String> matriz, String palavra) {
-  int linhas = matriz.length;
-  if (linhas == 0) return ResultadoBusca(0, {});
-  int colunas = matriz[0].length;
-  int tamanho = palavra.length;
+Result searchWordInMatrix(List<String> matrix, String word) {
+  int lines = matrix.length;
+  if (lines == 0) return Result(0, {});
+  int columns = matrix[0].length;
+  int size = word.length;
   int total = 0;
 
-  Set<Offset> posicoesEncontradas = {};
+  Set<Offset> positionsFound = {};
 
-  List<List<int>> direcoes = [
-    [0, 1], // direita
-    [1, 0], // baixo
-    [0, -1], // esquerda
-    [-1, 0], // cima
+  List<List<int>> directions = [
+    [0, 1], // right
+    [1, 0], // down
+    [0, -1], // left
+    [-1, 0], // up
     [1, 1], // diagonal ↘
     [-1, -1], // diagonal ↖
     [1, -1], // diagonal ↙
     [-1, 1], // diagonal ↗
   ];
 
-  for (int i = 0; i < linhas; i++) {
-    for (int j = 0; j < colunas; j++) {
-      for (var dir in direcoes) {
+  for (int i = 0; i < lines; i++) {
+    for (int j = 0; j < columns; j++) {
+      for (var dir in directions) {
         int dx = dir[0];
         int dy = dir[1];
 
         int x = i;
         int y = j;
 
-        bool encontrado = true;
-        List<Offset> posicaoAtual = [];
+        bool found = true;
+        List<Offset> currentPosition = [];
 
-        for (int k = 0; k < tamanho; k++) {
-          if (x < 0 || x >= linhas || y < 0 || y >= colunas) {
-            encontrado = false;
+        for (int k = 0; k < size; k++) {
+          if (x < 0 || x >= lines || y < 0 || y >= columns) {
+            found = false;
             break;
           }
 
-          if (matriz[x][y] != palavra[k]) {
-            encontrado = false;
+          if (matrix[x][y] != word[k]) {
+            found = false;
             break;
           }
 
-          posicaoAtual.add(Offset(x.toDouble(), y.toDouble()));
+          currentPosition.add(Offset(x.toDouble(), y.toDouble()));
 
           x += dx;
           y += dy;
         }
 
-        if (encontrado) {
+        if (found) {
           total++;
-          posicoesEncontradas.addAll(posicaoAtual);
+          positionsFound.addAll(currentPosition);
         }
       }
     }
   }
 
-  return ResultadoBusca(total, posicoesEncontradas);
+  return Result(total, positionsFound);
 }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:xmas_algorithm/theme/theme.dart';
 
-Widget buildMatrizView({
-  required List<String> matriz,
-  required int linhaInicial,
-  required int linhasVisiveis,
-  required Set<Offset> posicoesEncontradas,
-  required bool buscaRealizada,
+Widget buildMatrixView({
+  required List<String> matrix,
+  required int initialLine,
+  required int visibleLines,
+  required Set<Offset> positionsFound,
+  required bool searchPerformed,
 }) {
-  if (matriz.isEmpty) return const SizedBox();
+  if (matrix.isEmpty) return const SizedBox();
 
-  int colunas = matriz[0].length;
+  int columns = matrix[0].length;
   double cellSize = 25;
   double cellMargin = 2;
 
@@ -18,21 +18,21 @@ Widget buildMatrizView({
     scrollDirection: Axis.horizontal,
     child: Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(linhasVisiveis, (i) {
-        int linhaIndex = linhaInicial + i;
-        if (linhaIndex >= matriz.length) return const SizedBox();
+      children: List.generate(visibleLines, (i) {
+        int linhaIndex = initialLine + i;
+        if (linhaIndex >= matrix.length) return const SizedBox();
 
         return Row(
-          children: List.generate(colunas, (j) {
-            Offset posicao = Offset(linhaIndex.toDouble(), j.toDouble());
-            bool destacado = posicoesEncontradas.contains(posicao);
+          children: List.generate(columns, (j) {
+            Offset position = Offset(linhaIndex.toDouble(), j.toDouble());
+            bool marked = positionsFound.contains(position);
 
             String char;
 
-            if (!buscaRealizada) {
-              char = matriz[linhaIndex][j];
+            if (!searchPerformed) {
+              char = matrix[linhaIndex][j];
             } else {
-              char = destacado ? matriz[linhaIndex][j] : '.';
+              char = marked ? matrix[linhaIndex][j] : '.';
             }
 
             return Container(
@@ -41,14 +41,14 @@ Widget buildMatrizView({
               alignment: Alignment.center,
               margin: EdgeInsets.all(cellMargin / 2),
               decoration: BoxDecoration(
-                color: destacado ? AppColors.highlight : AppColors.borderCell,
+                color: marked ? AppColors.highlight : AppColors.borderCell,
                 border: Border.all(color: AppColors.borderCell),
               ),
               child: Text(
                 char,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: destacado ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: marked ? FontWeight.bold : FontWeight.normal,
                   color: Colors.black,
                 ),
               ),
