@@ -23,136 +23,109 @@ class _XMASHomePageState extends State<XMASHomePage> {
   static const int visibleLines = 20;
   int initialLine = 0;
 
+  Color resolveButtonColor(bool enabled) =>
+      enabled ? AppColors.secondary : Colors.grey[300]!;
+
+  Color resolveIconColor(bool enabled) =>
+      enabled ? Colors.white : Colors.grey[500]!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('XMAS Word Search'),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.secondary,
+        title: const Text('XMAS Word Search', style: TextStyle(
+          color: AppColors.primary
+        ),),
+        actions: [
+          IconButton(
+            onPressed: loadFile,
+            icon: const Icon(Icons.upload_file),
+            tooltip: 'Load Matrix',
+            style: FilledButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.only(bottom: 10),
         child: SizedBox(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 10,
-                children: [
-                  ElevatedButton(
-                    onPressed: loadFile,
-                    child: const Text('Load Matrix'),
-                  ),
-                  ElevatedButton(
-                    onPressed: calculateXMAS,
-                    child: const Text('Search "XMAS"'),
-                  ),
-                ],
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                width: double.infinity,
+                child: matrix.isEmpty
+                    ? null
+                    : Card(
+                      color: AppColors.secondary,
+                      elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Total words found',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '$totalFound',
+                                style: const TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
               ),
-              const SizedBox(height: 20),
-              Text('Total words found: $totalFound'),
-              const SizedBox(height: 20),
               if (loading)
                 const CircularProgressIndicator()
               else if (matrix.isEmpty)
-                const Text('No matrix loaded.')
+                Expanded(child: Center(child: const Text('No matrix loaded.')))
               else
                 Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: buildMatrixView(
-                          searchPerformed: searchPerformed,
-                          matrix: matrix,
-                          initialLine: initialLine,
-                          visibleLines: visibleLines,
-                          positionsFound: positionsFound,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  initialLine > 0
-                                      ? AppColors.secondary
-                                      : Colors.grey[300],
-                                ),
-                                foregroundColor: WidgetStateProperty.all(
-                                  initialLine > 0
-                                      ? Colors.white
-                                      : Colors.grey[500],
-                                ),
-                              ),
-                              icon: const Icon(Icons.arrow_upward),
-                              onPressed: initialLine > 0
-                                  ? () => moveWindow(-1)
-                                  : null,
-                            ),
-                            const SizedBox(width: 20),
-                            IconButton(
-                              disabledColor: Colors.grey,
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  (initialLine + visibleLines) < matrix.length
-                                      ? AppColors.secondary
-                                      : Colors.grey[300],
-                                ),
-                                foregroundColor: WidgetStateProperty.all(
-                                  (initialLine + visibleLines) < matrix.length
-                                      ? Colors.white
-                                      : Colors.grey[500],
-                                ),
-                              ),
-                              icon: const Icon(Icons.arrow_downward),
-                              onPressed:
-                                  (initialLine + visibleLines) < matrix.length
-                                  ? () => moveWindow(1)
-                                  : null,
-                            ),
-                            const SizedBox(width: 20),
-                            ElevatedButton(
-                              onPressed: initialLine > 0
-                                  ? () {
-                                      setState(() {
-                                        initialLine = 0;
-                                      });
-                                    }
-                                  : null,
-                              child: const Text('Top'),
-                            ),
-                            const SizedBox(width: 10),
-                            ElevatedButton(
-                              onPressed:
-                                  (initialLine + visibleLines) < matrix.length
-                                  ? () {
-                                      setState(() {
-                                        initialLine =
-                                            (matrix.length - visibleLines)
-                                                .clamp(0, matrix.length);
-                                      });
-                                    }
-                                  : null,
-                              child: const Text('Bottom'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // SizedBox(height: 60),
-                    ],
+                  flex: 5,
+                  child: buildMatrixView(
+                    searchPerformed: searchPerformed,
+                    matrix: matrix,
+                    initialLine: initialLine,
+                    visibleLines: visibleLines,
+                    positionsFound: positionsFound,
                   ),
-                ),
+                ), // SizedBox(height: 60),
             ],
           ),
         ),
       ),
+      floatingActionButton: matrix.isEmpty
+          ? null
+          : FloatingActionButton(
+              onPressed: calculateXMAS,
+              backgroundColor: AppColors.secondary,
+              child: Icon(Icons.search),
+            ),
     );
   }
 
@@ -176,14 +149,14 @@ class _XMASHomePageState extends State<XMASHomePage> {
 
       setState(() {
         matrix = lines;
+        loading = false;
       });
     } catch (e) {
       debugPrint('Erro on load file: $e');
+      setState(() {
+        loading = false;
+      });
     }
-
-    setState(() {
-      loading = false;
-    });
   }
 
   void calculateXMAS() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF1565C0);        // Azul forte
+  static const Color primary = Color.fromARGB(255, 255, 255, 255);        // Azul forte
   static const Color secondary = Color(0xFFEF6C00);      // Laranja vibrante
   static const Color backgroundCell = Color(0xFFE3F2FD); // Azul clarinho
   static const Color highlight = Color(0xFFFFA726);      // Laranja claro para destaque

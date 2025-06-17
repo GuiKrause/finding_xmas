@@ -10,52 +10,40 @@ Widget buildMatrixView({
 }) {
   if (matrix.isEmpty) return const SizedBox();
 
-  int columns = matrix[0].length;
-  double cellSize = 25;
-  double cellMargin = 2;
+  final rowLength = matrix.isNotEmpty ? matrix.first.length : 0;
 
   return SingleChildScrollView(
     scrollDirection: Axis.horizontal,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(visibleLines, (i) {
-        int linhaIndex = initialLine + i;
-        if (linhaIndex >= matrix.length) return const SizedBox();
+    child: SizedBox(
+      width: rowLength * 32,
+      child: ListView.builder(
+        itemCount: matrix.length,
+        itemBuilder: (context, row) {
+          return Row(
+            children: List.generate(rowLength, (col) {
+              final isHighlighted = positionsFound.contains(
+                Offset(row.toDouble(), col.toDouble()),
+              );
 
-        return Row(
-          children: List.generate(columns, (j) {
-            Offset position = Offset(linhaIndex.toDouble(), j.toDouble());
-            bool marked = positionsFound.contains(position);
+              final displayChar = (searchPerformed && !isHighlighted)
+                  ? '.'
+                  : matrix[row][col];
 
-            String char;
-
-            if (!searchPerformed) {
-              char = matrix[linhaIndex][j];
-            } else {
-              char = marked ? matrix[linhaIndex][j] : '.';
-            }
-
-            return Container(
-              width: cellSize,
-              height: cellSize,
-              alignment: Alignment.center,
-              margin: EdgeInsets.all(cellMargin / 2),
-              decoration: BoxDecoration(
-                color: marked ? AppColors.highlight : AppColors.borderCell,
-                border: Border.all(color: AppColors.borderCell),
-              ),
-              child: Text(
-                char,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: marked ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.black,
+              return Container(
+                width: 30,
+                height: 30,
+                margin: const EdgeInsets.all(1),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isHighlighted ? Colors.yellow : Colors.white,
+                  border: Border.all(color: Colors.black12),
                 ),
-              ),
-            );
-          }),
-        );
-      }),
+                child: Text(displayChar, style: const TextStyle(fontSize: 16)),
+              );
+            }),
+          );
+        },
+      ),
     ),
   );
 }
