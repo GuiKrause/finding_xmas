@@ -11,7 +11,7 @@ Aplicativo Flutter para busca da palavra **XMAS** em uma matriz de letras, imple
 - Exibição da matriz na tela, destacando as letras que fazem parte das palavras encontradas.
 - Substituição dos caracteres que não fazem parte de nenhuma ocorrência por pontos (`.`) após a busca.
 - Contador do total de ocorrências encontradas.
-- Botões para carregar arquivo, iniciar busca e navegar pela matriz (rolagem, ir ao topo e final).
+- Botões para carregar arquivo, e buscar palavras.
 - Interface limpa e simples, usando tema personalizado.
 
 ---
@@ -31,11 +31,11 @@ Aplicativo Flutter para busca da palavra **XMAS** em uma matriz de letras, imple
 
 4. No app:
 
-    Clique em Carregar Arquivo TXT para carregar a matriz.
+    Clique no ícone de upload de documento, na appbar, para carregar a matriz.
 
-    Clique em Buscar "XMAS" para iniciar a busca das ocorrências.
+    Toque no botão flutuante (lupa), no canto inferior direito, para iniciar a busca por ocorrências.
 
-    Use os botões de navegação para percorrer a matriz.
+    Realize a rolagem horizontal e vertical da tela, para verificar as ocorrências da palavra "XMAS".
 
 ## Algoritmo de busca
 
@@ -59,6 +59,21 @@ Aplicativo Flutter para busca da palavra **XMAS** em uma matriz de letras, imple
 
 - assets/input.txt — Arquivo de entrada com a matriz de letras.
 
+- screens/xmas_home_page.dart — Arquivo com estrutura scaffold para layout.
+- utils/find_word_in_matrix.dart — Função utilitária com lógica principal.
+
+- widgets/build_matrix_view.dart — Componente da matriz.
+
 ## Autor
 
-Guilherme - contato.guilhermekrause@gmail.com
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/GuiKrause">
+        <img src="https://avatars.githubusercontent.com/u/134097567?v=4" width="100px;" alt="Guilherme Krause Ramos"/>
+        <br/>
+        <sub><b>Guilherme Krause Ramos</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
