@@ -29,16 +29,29 @@ Widget buildMatrixView({
                   ? '.'
                   : matrix[row][col];
 
+              Color squareBackgroundColor = isHighlighted
+                  ? AppColors.secondary
+                  : AppColors.primary;
+
+              Color textForegroundColor = displayChar == '.'
+                  ? AppColors.secondary
+                  : searchPerformed
+                  ? AppColors.primary
+                  : AppColors.secondary;
+
               return Container(
                 width: 30,
                 height: 30,
                 margin: const EdgeInsets.all(1),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isHighlighted ? Colors.yellow : Colors.white,
-                  border: Border.all(color: Colors.black12),
+                  color: squareBackgroundColor,
+                  border: Border.all(color: AppColors.tertiary),
                 ),
-                child: Text(displayChar, style: const TextStyle(fontSize: 16)),
+                child: Text(
+                  displayChar,
+                  style: TextStyle(fontSize: 16, color: textForegroundColor),
+                ),
               );
             }),
           );

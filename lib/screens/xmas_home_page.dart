@@ -19,29 +19,29 @@ class _XMASHomePageState extends State<XMASHomePage> {
   bool searchPerformed = false;
   bool loading = false;
 
-  // Controle da janela
   static const int visibleLines = 20;
   int initialLine = 0;
 
-  Color resolveButtonColor(bool enabled) =>
-      enabled ? AppColors.secondary : Colors.grey[300]!;
-
-  Color resolveIconColor(bool enabled) =>
-      enabled ? Colors.white : Colors.grey[500]!;
-
   @override
   Widget build(BuildContext context) {
+    String description =
+        "Use the upload icon in the top app bar to load the matrix file. Once loaded, tap the search button to find all occurrences of 'XMAS' in every direction.";
+    String tolltipText = "Load Matrix";
+    String noMatrixText = "No matrix loaded.";
+    String totalFoundText = "Total words found";
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.secondary,
-        title: const Text('XMAS Word Search', style: TextStyle(
-          color: AppColors.primary
-        ),),
+        title: const Text(
+          'XMAS Search',
+          style: TextStyle(color: AppColors.primary),
+        ),
         actions: [
           IconButton(
             onPressed: loadFile,
             icon: const Icon(Icons.upload_file),
-            tooltip: 'Load Matrix',
+            tooltip: tolltipText,
             style: FilledButton.styleFrom(
               foregroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
@@ -63,10 +63,20 @@ class _XMASHomePageState extends State<XMASHomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 width: double.infinity,
                 child: matrix.isEmpty
-                    ? null
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          description,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.quaternary,
+                          ),
+                        ),
+                      )
                     : Card(
-                      color: AppColors.secondary,
-                      elevation: 1,
+                        color: AppColors.secondary,
+                        elevation: 1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -79,7 +89,7 @@ class _XMASHomePageState extends State<XMASHomePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Total words found',
+                                totalFoundText,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontSize: 14,
@@ -103,7 +113,14 @@ class _XMASHomePageState extends State<XMASHomePage> {
               if (loading)
                 const CircularProgressIndicator()
               else if (matrix.isEmpty)
-                Expanded(child: Center(child: const Text('No matrix loaded.')))
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      noMatrixText,
+                      style: TextStyle(color: AppColors.quaternary),
+                    ),
+                  ),
+                )
               else
                 Expanded(
                   flex: 5,
@@ -114,7 +131,7 @@ class _XMASHomePageState extends State<XMASHomePage> {
                     visibleLines: visibleLines,
                     positionsFound: positionsFound,
                   ),
-                ), // SizedBox(height: 60),
+                ),
             ],
           ),
         ),
@@ -124,6 +141,10 @@ class _XMASHomePageState extends State<XMASHomePage> {
           : FloatingActionButton(
               onPressed: calculateXMAS,
               backgroundColor: AppColors.secondary,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: AppColors.primary, width: 2),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Icon(Icons.search),
             ),
     );
@@ -143,7 +164,7 @@ class _XMASHomePageState extends State<XMASHomePage> {
       final content = await rootBundle.loadString('assets/input.txt');
       final lines = content
           .split('\n')
-          .map((linha) => linha.trim())
+          .map((line) => line.trim())
           .where((l) => l.isNotEmpty)
           .toList();
 
@@ -162,11 +183,11 @@ class _XMASHomePageState extends State<XMASHomePage> {
   void calculateXMAS() {
     if (matrix.isEmpty) return;
 
-    final resultado = searchWordInMatrix(matrix, word);
+    final result = searchWordInMatrix(matrix, word);
 
     setState(() {
-      totalFound = resultado.total;
-      positionsFound = resultado.positions;
+      totalFound = result.total;
+      positionsFound = result.positions;
       searchPerformed = true;
     });
   }

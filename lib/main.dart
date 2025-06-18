@@ -9,11 +9,14 @@ void main() {
 class XMASApp extends StatelessWidget {
   const XMASApp({super.key});
 
+  final String title = 'XMAS Search';
+  final bool debugShowCheckedModeBanner = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'XMAS Word Search',
+      debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+      title: title,
       theme: appTheme,
       home: const XMASHomePage(),
     );
